@@ -26,7 +26,6 @@ while (have_posts()) : the_post(); ?>
                         <?php echo get_the_content(); ?>
                     </div>
                 </div>
-                <?php var_dump(get_post_meta(get_the_ID())); ?>
                 <div class="meta-field">
                     <p class="post-heading"><?php _e(date_i18n("d/m/Y", strtotime($event_datepicker))); ?></p>
                     <p class="post-heading"><?php _e($event_location); ?></p>

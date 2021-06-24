@@ -60,6 +60,7 @@ class EventListing {
 		  'rewrite' => array('slug' => 'cpt_events'),
 		  'has_archive' => true,
 		  'hierarchical' => false,
+		  'menu_icon' => 'dashicons-list-view',
 		  'show_in_rest' => true,
 		  'register_meta_box_cb' => array($this, 'dx_meta_boxes_callback')
 		);
