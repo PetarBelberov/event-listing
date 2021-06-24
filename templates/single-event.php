@@ -12,14 +12,14 @@ get_header();
 while (have_posts()) : the_post(); ?>
     <?php if (!empty($event_datepicker) && !empty($event_location) && !empty($event_url)) : ?>
         <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-            <div class="entry-content">
+            <div id="entry-content">
                 <div class="row">
                     <div class="post-content">
                         <?php echo get_the_post_thumbnail(); ?>
                     </div>
                     <div class='slider-content'>
                         <div class='slider-text'>
-                            <h1 class="post-heading"><?php _e(the_title()) ?></h1>
+                            <h1 id="post-heading"><?php _e(the_title()) ?></h1>
                         </div>
                     </div> 
                     <div class="post-content">
@@ -41,7 +41,7 @@ while (have_posts()) : the_post(); ?>
             <!-- .entry-content -->
         </article>
     <?php else : ?>
-        <div class="empty">
+        <div id="empty">
             <h2><?php _e('Empty'); ?></h2>
         </div>
     <?php endif; ?>

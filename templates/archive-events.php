@@ -10,7 +10,7 @@ query_posts(array(
 ));
 ?>
 
-<div class="events-list">
+<div id="events-list">
    <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
       <h2>
          <a href="<?php the_permalink() ?>"><?php the_title(); ?></a>
