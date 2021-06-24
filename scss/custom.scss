@@ -13,23 +13,27 @@ $main-color:  #64C040;
     padding: 2rem;
     border-radius: 15px;
   }
+%link {
+    text-decoration: none;
+    color: #808080b5;
+    &:hover {
+        color: $main-color;
+        text-decoration: none;
+    }
+}
 
 // Archive page
 .events-list {
     @extend %center;
     & h2 {
         & a {
-            text-decoration: none;
-            color: #808080b5;
-            &:hover {
-                color: $main-color;
-            }
+           @extend %link;
         }
     }
 }
 
 // Single Event Page
-.entry-content {
+.entry-content, .empty {
     @extend %center;
     & .row {
         display: block;
@@ -49,5 +53,8 @@ $main-color:  #64C040;
             color: #fff;
             border-color: #263238;
         }
+    }
+    & a {
+        @extend %link;
     }
 }
