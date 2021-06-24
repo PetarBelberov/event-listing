@@ -32,7 +32,7 @@ while (have_posts()) : the_post();
         <div class="meta-field">
             <p class="post-heading"><?php _e(date_i18n("d/m/Y", strtotime($event_datepicker))); ?></p>
             <p class="post-heading"><?php _e($event_location); ?></p>
-            <iframe width="640" height="480" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.it/maps?q=<?php echo esc_html($event_url); ?>&output=embed"></iframe>
+            <iframe width="640" height="480" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.it/maps?q=<?php echo esc_html($event_location); ?>&output=embed"></iframe>
                 <a href="https://www.google.com/calendar/render?action=TEMPLATE&text=<?php echo esc_html__($event_title); ?>&dates=<?php echo $google_calendar_datepicker . '/' . $google_calendar_datepicker; ?>&location=<?php echo esc_html__($event_location); ?>&details=Event+URL:+<?php echo esc_html($event_url); ?>&sf=true&output=xml">
             <input type="submit" value="Add to Calendar"/>
             </a>
