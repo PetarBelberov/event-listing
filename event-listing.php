@@ -87,11 +87,12 @@ class DX_Plugin_Base {
  		add_action( 'wp_ajax_store_ajax_value', array( $this, 'store_ajax_value' ) );
  		add_action( 'wp_ajax_fetch_ajax_url_http', array( $this, 'fetch_ajax_url_http' ) );
 
+		//  Custom
+		// Enqueue the custom styling
+		wp_enqueue_style( 'custom-css', plugins_url('scss/custom.css', __FILE__));
+
 		add_action('init', array($this, 'cpt_post_type_events'));
 		add_action( 'save_post', array($this,'cpt_save_events_meta'), 1, 2);
-
-		// // add_filter( 'template_include', array($this, 'portfolio_page_template'), 99 );
-		// add_filter('archive_template', array($this, 'yourplugin_get_custom_archive_template'));
 
 		add_filter('single_template',array($this,'cpt_single_customtype'));
 		add_filter('archive_template',array($this,'cpt_archive_customtype'));
@@ -308,7 +309,7 @@ function cpt_single_customtype($single_template){
 		// wp_register_style( 'samplestyle-admin', plugins_url( '/css/samplestyle-admin.css', __FILE__ ), array(), '1.0', 'screen' );
 		// wp_enqueue_style( 'samplestyle-admin' );
 		
-		// if( 'toplevel_page_dx-plugin-base' === $hook ) {
+		// if( 'toplevel_page_event-listing' === $hook ) {
 		// 	wp_register_style('dx_help_page',  plugins_url( '/help-page.css', __FILE__ ) );
 		// 	wp_enqueue_style('dx_help_page');
 		// }
@@ -325,9 +326,9 @@ function cpt_single_customtype($single_template){
 	 *  
 	 */
 	public function dx_admin_pages_callback() {
-		add_menu_page(__( "Plugin Base Admin", 'dxbase' ), __( "Plugin Base Admin", 'dxbase' ), 'edit_themes', 'dx-plugin-base', array( $this, 'dx_plugin_base' ) );		
-		add_submenu_page( 'dx-plugin-base', __( "Base Subpage", 'dxbase' ), __( "Base Subpage", 'dxbase' ), 'edit_themes', 'dx-base-subpage', array( $this, 'dx_plugin_subpage' ) );
-		add_submenu_page( 'dx-plugin-base', __( "Remote Subpage", 'dxbase' ), __( "Remote Subpage", 'dxbase' ), 'edit_themes', 'dx-remote-subpage', array( $this, 'dx_plugin_side_access_page' ) );
+		add_menu_page(__( "Plugin Base Admin", 'dxbase' ), __( "Plugin Base Admin", 'dxbase' ), 'edit_themes', 'event-listing', array( $this, 'dx_plugin_base' ) );		
+		add_submenu_page( 'event-listing', __( "Base Subpage", 'dxbase' ), __( "Base Subpage", 'dxbase' ), 'edit_themes', 'dx-base-subpage', array( $this, 'dx_plugin_subpage' ) );
+		add_submenu_page( 'event-listing', __( "Remote Subpage", 'dxbase' ), __( "Remote Subpage", 'dxbase' ), 'edit_themes', 'dx-remote-subpage', array( $this, 'dx_plugin_side_access_page' ) );
 	}
 	
 	/**
@@ -517,7 +518,7 @@ function cpt_single_customtype($single_template){
 	 * 
 	 */
 	public function dx_register_settings() {
-		require_once( DXP_PATH . '/dx-plugin-settings.class.php' );
+		require_once( DXP_PATH . '/event-listing-settings.php' );
 		new DX_Plugin_Settings();
 	}
 	

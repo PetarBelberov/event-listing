@@ -1,0 +1,53 @@
+// Variable
+$main-color:  #64C040;
+
+// Placeholder class
+%center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    text-align: center;
+    border: 3px solid $main-color;
+    padding: 2rem;
+    border-radius: 15px;
+  }
+
+// Archive page
+.events-list {
+    @extend %center;
+    & h2 {
+        & a {
+            text-decoration: none;
+            color: #808080b5;
+            &:hover {
+                color: $main-color;
+            }
+        }
+    }
+}
+
+// Single Event Page
+.entry-content {
+    @extend %center;
+    & .row {
+        display: block;
+    }
+    & input {
+        margin-top: 1rem;
+        background-color: $main-color;
+        border: none;
+        padding: 1rem;
+        border-radius: 5%;
+        color: #fff;
+        font-weight: bold;
+        border: 1px solid $main-color;
+        &:hover {
+            transition: .2s all;
+            background-color: #37474f;
+            color: #fff;
+            border-color: #263238;
+        }
+    }
+}
