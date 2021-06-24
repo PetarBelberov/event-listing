@@ -25,6 +25,7 @@ $main-color:  #64C040;
 // Archive page
 #events-list {
     @extend %center;
+    background-color: #fff;
     & h2 {
         & a {
            @extend %link;
@@ -58,5 +59,8 @@ $main-color:  #64C040;
     }
     & a {
         @extend %link;
+    }
+    & #meta-field {
+        display: grid;
     }
 }
