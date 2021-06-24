@@ -7,6 +7,7 @@ date_default_timezone_set('GMT');
 $google_calendar_datepicker = date_i18n("Ymd\THis\Z", strtotime($event_datepicker));
 
 get_header();
+
 /* Start the Loop */
 while (have_posts()) : the_post(); ?>
     <?php if (!empty($event_datepicker) && !empty($event_location) && !empty($event_url)) : ?>
@@ -25,6 +26,7 @@ while (have_posts()) : the_post(); ?>
                         <?php echo get_the_content(); ?>
                     </div>
                 </div>
+                <?php var_dump(get_post_meta(get_the_ID())); ?>
                 <div class="meta-field">
                     <p class="post-heading"><?php _e(date_i18n("d/m/Y", strtotime($event_datepicker))); ?></p>
                     <p class="post-heading"><?php _e($event_location); ?></p>

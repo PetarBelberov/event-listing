@@ -9,7 +9,7 @@
  * License: GPL2
  */
 
- 
+
 class EventListing {
 	
 	/**
@@ -38,10 +38,9 @@ class EventListing {
 		add_action('init', array($this, 'cpt_post_type_events'));
 		add_action( 'save_post', array($this,'cpt_save_events_meta'), 1, 2);
 
-		add_filter('single_template',array($this,'cpt_single_customtype'));
-		add_filter('archive_template',array($this,'cpt_archive_customtype'));
+		add_filter('single_template', array($this,'cpt_single_customtype'));
+		add_filter('archive_template', array($this,'cpt_archive_customtype'));
 	}	
-
 	function cpt_post_type_events() {
 		$supports = array(
 		  'title', // post title
