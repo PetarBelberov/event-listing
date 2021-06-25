@@ -6,7 +6,7 @@ get_header();
 
 query_posts(array(
    'post_type' => 'events',
-   'post_status' => array('publish', 'future'),
+   'post_status' => array('publish', 'future')
 ));
 ?>
 

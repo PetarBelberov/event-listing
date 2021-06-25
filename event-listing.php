@@ -19,12 +19,12 @@ class EventListing {
 	public function __construct() {
 
 		// add scripts and styles only available in admin
-		add_action( 'wp_enqueue_scripts', array( $this, 'dx_add_CSS' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'dx_add_admin_CSS' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'dx_add_admin_JS' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'cpt_add_CSS' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'cpt_add_admin_CSS' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'cpt_add_admin_JS' ) );
 
 		// register meta boxes for Pages (could be replicated for posts and custom post types)
-		add_action( 'add_meta_boxes', array( $this, 'dx_meta_boxes_callback' ) );
+		add_action( 'add_meta_boxes', array( $this, 'cpt_meta_boxes_callback' ) );
 
 		// Add actions for storing value and fetching URL
 		// use the wp_ajax_nopriv_ hook for non-logged users (handle guest actions)
@@ -32,15 +32,19 @@ class EventListing {
 		add_action( 'wp_ajax_fetch_ajax_url_http', array( $this, 'fetch_ajax_url_http' ) );
 
 		// Register activation and deactivation hooks
-		register_activation_hook( __FILE__, 'dx_on_activate_callback');
-		register_deactivation_hook( __FILE__, 'dx_on_deactivate_callback' );
+		register_activation_hook( __FILE__, 'cpt_on_activate_callback');
+		register_deactivation_hook( __FILE__, 'cpt_on_deactivate_callback' );
 
 		add_action('init', array($this, 'cpt_post_type_events'));
 		add_action( 'save_post', array($this,'cpt_save_events_meta'), 1, 2);
 
 		add_filter('single_template', array($this,'cpt_single_customtype'));
 		add_filter('archive_template', array($this,'cpt_archive_customtype'));
+
+		add_action('pre_get_posts', array($this,'cpt_pre_get_posts'));
+
 	}	
+	  
 	function cpt_post_type_events() {
 		$supports = array(
 		  'title', // post title
@@ -62,7 +66,7 @@ class EventListing {
 		  'hierarchical' => false,
 		  'menu_icon' => 'dashicons-list-view',
 		  'show_in_rest' => true,
-		  'register_meta_box_cb' => array($this, 'dx_meta_boxes_callback')
+		  'register_meta_box_cb' => array($this, 'cpt_meta_boxes_callback')
 		);
 		  register_post_type('events', $args);
 	  }
@@ -79,7 +83,7 @@ function cpt_events_output() {
 	// Get the datepicker data if it's already been entered
 	$datepicker = get_post_meta( $post->ID, 'datepicker', true );
 
-	// Get the datepicker data if it's already been entered
+	// Get the location data if it's already been entered
 	$location = get_post_meta( $post->ID, 'location', true );
 
 	// Get the url data if it's already been entered
@@ -111,7 +115,7 @@ public function cpt_save_events_meta( $post_id, $post ) {
 
 	// Now that we're authenticated, time to save the data.
 	// This sanitizes the data from the field and saves it into an array $events_meta.
-	$events_meta['datepicker'] = esc_textarea( $_POST['datepicker'] );
+	$events_meta['datepicker'] = date_i18n("Y/m/d", strtotime( $_POST['datepicker'] ));
 	$events_meta['location'] = esc_textarea( $_POST['location'] );
 	$events_meta['url'] = esc_textarea( $_POST['url'] );
 
@@ -160,6 +164,20 @@ function cpt_single_customtype($single_template){
 	   return $archive_template;
   }
 	
+  function cpt_pre_get_posts( $query ) {
+		
+	if( is_admin() ) {
+	  return $query; 
+	}
+  
+	if( isset($query->query_vars['post_type']) && $query->query_vars['post_type'] == 'events') {
+	  $query->set('orderby', 'meta_value_num'); 
+	  $query->set('meta_key', 'datepicker');   
+	  $query->set('order', 'DESC'); 
+	}
+	return $query;
+  }
+
 	/**
 	 *
 	 * Adding JavaScript scripts for the admin pages only
@@ -167,7 +185,7 @@ function cpt_single_customtype($single_template){
 	 * Loading existing scripts from wp-includes or adding custom ones
 	 *
 	 */
-	public function dx_add_admin_JS( $hook ) {
+	public function cpt_add_admin_JS( $hook ) {
 		wp_enqueue_script( 'jquery-script', 'https://code.jquery.com/jquery-1.12.4.js', array( "jquery" ));
 		wp_enqueue_script( 'jquery-script-ui', 'https://code.jquery.com/ui/1.12.1/jquery-ui.js');
 		wp_enqueue_script( 'custom-script', plugins_url('/js/cpt-custom.js', __FILE__));
@@ -178,7 +196,7 @@ function cpt_single_customtype($single_template){
 	 * Add CSS styles
 	 * 
 	 */
-	public function dx_add_CSS() {
+	public function cpt_add_CSS() {
 		// Enqueue the custom styling
 		wp_enqueue_style( 'custom-css', plugins_url('scss/custom.css', __FILE__));
 	}
@@ -188,7 +206,7 @@ function cpt_single_customtype($single_template){
 	 * Add admin CSS styles - available only on admin
 	 *
 	 */
-	public function dx_add_admin_CSS( $hook ) {
+	public function cpt_add_admin_CSS( $hook ) {
 		wp_enqueue_style( 'jquery-css', // wrapped for brevity
             '//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css', [], null );
 	}
@@ -198,7 +216,7 @@ function cpt_single_customtype($single_template){
 	 *  Adds a metabox to the right side of the screen under the “Publish” box
 	 *   
 	 */
-	public function dx_meta_boxes_callback() {
+	public function cpt_meta_boxes_callback() {
 		add_meta_box(
 			'cpt_events',
 			'Events',
@@ -210,22 +228,11 @@ function cpt_single_customtype($single_template){
 	}
 	
 	/**
-	 * Initialize the Settings class
-	 * 
-	 * Register a settings section with a field for a secure WordPress admin option creation.
-	 * 
-	 */
-	public function dx_register_settings() {
-		require_once( DXP_PATH . '/event-listing-settings.php' );
-		new DX_Plugin_Settings();
-	}
-	
-	/**
 	 * Callback for saving a simple AJAX option with no page reload
 	 */
 	public function store_ajax_value() {
-		if( isset( $_POST['data'] ) && isset( $_POST['data']['dx_option_from_ajax'] ) ) {
-			update_option( 'dx_option_from_ajax' , $_POST['data']['dx_option_from_ajax'] );
+		if( isset( $_POST['data'] ) && isset( $_POST['data']['cpt_option_from_ajax'] ) ) {
+			update_option( 'cpt_option_from_ajax' , $_POST['data']['cpt_option_from_ajax'] );
 		}	
 		die();
 	}
@@ -234,8 +241,8 @@ function cpt_single_customtype($single_template){
 	 * Callback for getting a URL and fetching it's content in the admin page
 	 */
 	public function fetch_ajax_url_http() {
-		if( isset( $_POST['data'] ) && isset( $_POST['data']['dx_url_for_ajax'] ) ) {
-			$ajax_url = $_POST['data']['dx_url_for_ajax'];
+		if( isset( $_POST['data'] ) && isset( $_POST['data']['cpt_url_for_ajax'] ) ) {
+			$ajax_url = $_POST['data']['cpt_url_for_ajax'];
 			
 			$response = wp_remote_get( $ajax_url );
 			
@@ -262,7 +269,7 @@ function cpt_single_customtype($single_template){
  * Register activation hook
  *
  */
-function dx_on_activate_callback() {
+function cpt_on_activate_callback() {
 	// Trigger our function that registers the custom post type plugin.
 	$cpt_register = new EventListing();
 	$cpt_register->cpt_post_type_events();
@@ -274,7 +281,7 @@ function dx_on_activate_callback() {
  * Register deactivation hook
  *
  */
-function dx_on_deactivate_callback() {
+function cpt_on_deactivate_callback() {
 	// Unregister the post type, so the rules are no longer in memory.
     unregister_post_type( 'events' );
     // Clear the permalinks to remove our post type's rules from the database.
