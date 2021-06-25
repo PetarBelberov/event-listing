@@ -1,5 +1,5 @@
 ## Event Listing
-The Event Listing is a custom post type with an archive page that lists all events. Each event has a title, location (with Google map integration), event date, and a link to the external site. Also, the single event has an "Add to Google Calendar" button, which adds the event to the Google calendar.
+The Event Listing is a custom post type with an archive page that lists all events ordered by event date picker field. Each event has a title, location (with Google map integration), event date, and a link to the external site. Also, the single event has an "Add to Google Calendar" button, which adds the event to the Google calendar.
 
 ## Installation
 Clone the repository and activate the plugin.
