@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Event Listing
- * Description: An event listing plugin built with the DX Plugin Base framework
+ * Description: A custom post type event listing plugin
  * Plugin URI: https://github.com/PetarBelberov/event-listing
  * Author: Petar Belberov
  * Author URI: https://github.com/PetarBelberov
@@ -14,9 +14,9 @@ class EventListing {
 	
 	/**
 	 * 
-	 * Assign everything as a call from within the constructor
+	 * Assign everything(the hooks) as a call from within the init method
 	 */
-	public function __construct() {
+	public function init() {
 
 		// add scripts and styles only available in admin
 		add_action( 'wp_enqueue_scripts', array( $this, 'cpt_add_CSS' ) );
@@ -32,8 +32,8 @@ class EventListing {
 		add_action( 'wp_ajax_fetch_ajax_url_http', array( $this, 'fetch_ajax_url_http' ) );
 
 		// Register activation and deactivation hooks
-		register_activation_hook( __FILE__, 'cpt_on_activate_callback');
-		register_deactivation_hook( __FILE__, 'cpt_on_deactivate_callback' );
+		register_activation_hook( __FILE__, 'el_on_activate_callback');
+		register_deactivation_hook( __FILE__, 'el_on_deactivate_callback' );
 
 		add_action('init', array($this, 'cpt_post_type_events'));
 		add_action( 'save_post', array($this,'cpt_save_events_meta'), 1, 2);
@@ -43,14 +43,40 @@ class EventListing {
 
 		add_action('pre_get_posts', array($this,'cpt_pre_get_posts'));
 
+		// shortcodes
+		add_action( 'init', array( $this, 'pb_event_listing_shortcode' ) );
 	}	
+
+	/**
+	 * Register brands shortcode to be used
+	 * 
+	 * First parameter is the shortcode name, would be used like: [fp_brands]
+	 * 
+	 */
+	public function pb_event_listing_shortcode() {
+		add_shortcode( 'pb_event_listing', array( $this, 'pb_event_listing_shortcode_body' ) );
+	}
+
+	/**
+	 * Returns the content of the sample shortcode, like [fp_brands]
+	 * @param array $attr arguments passed to array, like [fp_brands attr1="one" attr2="two"]
+	 * @param string $content optional, could be used for a content to be wrapped, such as [fp_brands]somecontnet[/fp_brands]
+	 */
+	public function pb_event_listing_shortcode_body() {
+		global $content;
+    	ob_start();
+		require_once plugin_dir_path( __FILE__ ) . 'templates/shortcode-events.php';
+		$output = ob_get_clean();
+    	return $output;
+	}
 	  
 	function cpt_post_type_events() {
 		$supports = array(
 		  'title', // post title
 		  'editor', // post content
 		  'thumbnail', // featured images
-		  'custom-fields' // custom fields
+		  'custom-fields',
+		  'excerpt' // custom fields
 		);
 		$labels = array(
 		  'name' => _x('Events', 'plural'),
@@ -61,20 +87,23 @@ class EventListing {
 		  'labels' => $labels,
 		  'public' => true,
 		  'query_var' => true,
-		  'rewrite' => array('slug' => 'cpt_events'),
+		  'rewrite' => array('slug' => ''),
 		  'has_archive' => true,
 		  'hierarchical' => false,
 		  'menu_icon' => 'dashicons-list-view',
 		  'show_in_rest' => true,
-		  'register_meta_box_cb' => array($this, 'cpt_meta_boxes_callback')
+		  'register_meta_box_cb' => array($this, 'cpt_meta_boxes_callback'),
+		  'taxonomies' => array( 'category' ),
 		);
 		  register_post_type('events', $args);
 	  }
  
+
+	  
 /**
  * Output the HTML for the metabox.
  */
-function cpt_events_output() {
+function events_output() {
 	global $post;
  
 	// Nonce field to validate form request came from current site
@@ -218,9 +247,9 @@ function cpt_single_customtype($single_template){
 	 */
 	public function cpt_meta_boxes_callback() {
 		add_meta_box(
-			'cpt_events',
+			'',
 			'Events',
-			array($this, 'cpt_events_output'),
+			array($this, 'events_output'),
 			'events',
 			'side',
 			'default'
@@ -264,12 +293,11 @@ function cpt_single_customtype($single_template){
 	
 }
 
-
 /**
  * Register activation hook
  *
  */
-function cpt_on_activate_callback() {
+function el_on_activate_callback() {
 	// Trigger our function that registers the custom post type plugin.
 	$cpt_register = new EventListing();
 	$cpt_register->cpt_post_type_events();
@@ -281,7 +309,7 @@ function cpt_on_activate_callback() {
  * Register deactivation hook
  *
  */
-function cpt_on_deactivate_callback() {
+function el_on_deactivate_callback() {
 	// Unregister the post type, so the rules are no longer in memory.
     unregister_post_type( 'events' );
     // Clear the permalinks to remove our post type's rules from the database.
@@ -289,4 +317,6 @@ function cpt_on_deactivate_callback() {
 }
 
 // Initialize everything
-$EventListing = new EventListing();
+$eventListing = new EventListing();
+// Calling the init method outside of the class. The result is removing the coupling of the class to WordPress.
+$eventListing->init();

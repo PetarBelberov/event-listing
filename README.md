@@ -5,7 +5,7 @@ The Event Listing is a custom post type with an archive page that lists all even
 Clone the repository and activate the plugin.
 
 ## Usage
-The plugin would be ready to use when you open the "Events" post type in the dashboard and create your events. To show all the listed events, create a new page and copy the **[cpt_events]** slug in the Permalink URL box. There are few custom fields in the custom post type "Events"(location, event date, link to the external source/site). When you fill them, the single event will visualize and ready to use.
+The plugin would be ready to use when you open the "Events" post type in the dashboard and create your events. To show all listed events, you can access the ** [/ events] ** URI or add ** [pb_event_listing] ** shortocde wherever you want, and the events will be displayed. There are few custom fields in the custom post type "Events"(location, event date, link to the external source/site). When you fill them, the single event will visualize and ready to use.
 
 ## Feedback
 Feel free to send me feedback on petar_belberov@gmx.com or file an issue. Feature requests are always welcome. If you wish to contribute, please do not hesitate.

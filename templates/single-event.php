@@ -1,15 +1,27 @@
+
+<!-- Single -->
 <?php
-$event_title = get_the_title();
-$event_datepicker = get_post_meta(get_the_ID(), 'datepicker', true );
-$event_location = get_post_meta(get_the_ID(), 'location', true );
-$event_url = get_post_meta(get_the_ID(), 'url', true );
-date_default_timezone_set('GMT');
-$google_calendar_datepicker = date_i18n("Ymd\THis\Z", strtotime($event_datepicker));
+
 
 get_header();
 
+query_posts(array(
+   'post_type' => 'events',
+   'post_status' => array('publish', 'future'),
+));
+
 /* Start the Loop */
-while (have_posts()) : the_post(); ?>
+// while (have_posts()) : the_post(); ?>
+
+<?php 
+$event_title = get_the_title();
+$event_datepicker = get_post_meta(get_the_ID(), 'datepicker', true );
+
+$event_url = get_post_meta(get_the_ID(), 'url', true );
+date_default_timezone_set('GMT');
+$google_calendar_datepicker = date_i18n("Ymd\THis\Z", strtotime($event_datepicker));
+$event_location = get_post_meta(get_the_ID(), 'location', true );
+?>
     <?php if (!empty($event_datepicker) && !empty($event_location) && !empty($event_url)) : ?>
         <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
             <div id="entry-content">
@@ -46,6 +58,8 @@ while (have_posts()) : the_post(); ?>
         </div>
     <?php endif; ?>
 <!-- #post-<?php the_ID(); ?> -->
-<?php endwhile; // End of the loop.
+ <?php
+//  endwhile; -->
+ // End of the loop.
 get_footer();
 ?>

@@ -2,7 +2,6 @@
 /* 
 Template Name: Events
 */
-get_header();
 
 query_posts(array(
    'post_type' => 'events',
@@ -20,4 +19,3 @@ query_posts(array(
       <?php endwhile; ?>
    <?php endif; ?>
 </div>
-<?php get_footer(); ?>

@@ -3,11 +3,19 @@ $main-color:  #64C040;
 
 // Placeholder class
 %center {
-    position: absolute;
+    // position: absolute;
+    // top: 50%;
+    // left: 50%;
+    // -webkit-transform: translate(-50%, -50%);
+    // transform: translate(-50%, -50%);
+    
+    position: relative;
     top: 50%;
+    transform: translate(-50%);
     left: 50%;
-    -webkit-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
+    margin: 10rem 0;
+    max-width: 640px;
+
     text-align: center;
     border: 3px solid $main-color;
     padding: 2rem;
